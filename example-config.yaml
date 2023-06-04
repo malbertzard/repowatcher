@@ -7,6 +7,8 @@ username: malbertzard
 # Absolute path to basedir
 basedir: "/path/code/"
 
+autoSync: true #Sync before every diff action
+
 # threads: 5
 
 # A collection of repos
