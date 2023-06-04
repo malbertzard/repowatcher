@@ -1,0 +1,23 @@
+# Email address for Git commands
+email: malbertzard@gmail.com
+
+# Username for Git commands
+username: malbertzard
+
+# Absolute path to basedir
+basedir: "/path/code/"
+
+# threads: 5
+
+# A collection of repos
+repos:
+  luafetch: 
+    nickname: "luafetch"
+    path: "luafetch/"
+    url: "github.com/.."
+    lastcommit: ""
+    tags: ["lua", "private"]
+    active: true
+    # username: ""
+    # privatekey: ""
+
