@@ -1,4 +1,4 @@
-# RepoWatch
+# RepoWatcher
 
 Repo Watch is a command-line tool for managing multiple Git repositories. It provides various commands to perform common tasks such as fetching changes from remote, pulling changes, cloning repositories, showing diffs, opening repositories in an IDE, and executing commands within repositories.
 
@@ -9,13 +9,13 @@ To install Repo Watch, you need to have Go installed on your system. Follow thes
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/malbertzard/repowatch.git
+   git clone https://github.com/malbertzard/repowatcher.git
    ```
 
-2. Change to the repowatch directory:
+2. Change to the repowatcher directory:
 
    ```bash
-   cd repowatch
+   cd repowatcher
    ```
 
 3. Build the executable:
@@ -157,7 +157,7 @@ po2.git
 
 ## Contributing
 
-Contributions are welcome! If you find any issues or have suggestions for improvements, please open an issue or submit a pull request on the [GitHub repository](https://github.com/user/repo-watch).
+Contributions are welcome! If you find any issues or have suggestions for improvements, please open an issue or submit a pull request on the [GitHub repository](https://github.com/malbertzard/repowatcher).
 
 ## License
 
