@@ -7,6 +7,7 @@ import (
 	"repo-watch/commands"
 	"repo-watch/helpers"
 	"repo-watch/models"
+	"repo-watch/receiver"
 
 	"github.com/spf13/cobra"
 	"gopkg.in/yaml.v2"
@@ -16,6 +17,7 @@ var (
 	configFile    string
 	config        models.Config
 	allReposFlag  bool
+	jsonOutput    bool
 	exampleConfig = `---
 rootFolder: /path/to/repositories
 editCommand: code
@@ -39,138 +41,159 @@ func main() {
 
 	rootCmd.PersistentFlags().StringVarP(&configFile, "config", "c", "config.yaml", "config file")
 	rootCmd.PersistentFlags().BoolVarP(&allReposFlag, "all", "a", false, "apply command to all repositories")
+	rootCmd.PersistentFlags().BoolVar(&jsonOutput, "json", false, "output in JSON format")
 
-	rootCmd.AddCommand(&cobra.Command{
-		Use:   "fetch",
-		Short: "Fetch changes from remote for one or all repositories",
-		Run:   fetchChangesCommand,
-	})
-
-	rootCmd.AddCommand(&cobra.Command{
-		Use:   "list",
-		Short: "List repositories",
-		Run:   listRepositoriesCommand,
-	})
-
-	rootCmd.AddCommand(&cobra.Command{
-		Use:   "pull",
-		Short: "Pull changes from remote for one or all repositories",
-		Run:   pullChangesCommand,
-	})
-
-	rootCmd.AddCommand(&cobra.Command{
-		Use:   "clone [nickname]",
-		Short: "Clone a repository or all repositories",
-		Args:  cobra.MaximumNArgs(1),
-		Run:   cloneRepositoryCommand,
-	})
-
-	rootCmd.AddCommand(&cobra.Command{
-		Use:   "diff [nickname]",
-		Short: "Show diff for a repository or all repositories",
-		Args:  cobra.MaximumNArgs(1),
-		Run:   showRepositoryDiffCommand,
-	})
-
-	rootCmd.AddCommand(&cobra.Command{
-		Use:   "edit [nickname]",
-		Short: "Open a repository in IDE",
-		Args:  cobra.ExactArgs(1),
-		Run:   openRepositoryInIDECommand,
-	})
-
-	rootCmd.AddCommand(&cobra.Command{
-		Use:   "exec [nickname] [command]",
-		Short: "Execute a command in a repository",
-		Args:  cobra.MinimumNArgs(2),
-		Run:   executeCommandInRepositoryCommand,
-	})
-
-	rootCmd.AddCommand(&cobra.Command{
-		Use:   "generate-config",
-		Short: "Generate an example config file",
-		Run:   generateExampleConfigCommand,
-	})
+	rootCmd.AddCommand(newFetchCommand())
+	rootCmd.AddCommand(newListCommand())
+	rootCmd.AddCommand(newPullCommand())
+	rootCmd.AddCommand(newCloneCommand())
+	rootCmd.AddCommand(newDiffCommand())
+	rootCmd.AddCommand(newEditCommand())
+	rootCmd.AddCommand(newExecCommand())
+	rootCmd.AddCommand(newGenerateConfigCommand())
 
 	if err := rootCmd.Execute(); err != nil {
 		log.Fatal(err)
 	}
 }
 
-func listRepositoriesCommand(cmd *cobra.Command, args []string) {
-	if err := loadConfig(); err != nil {
-		log.Fatal(err)
+func newListCommand() *cobra.Command {
+	return &cobra.Command{
+		Use:   "list",
+		Short: "List repositories",
+		Run: func(cmd *cobra.Command, args []string) {
+			if err := loadConfig(); err != nil {
+				log.Fatal(err)
+			}
+			receiver := getReceiver()
+			commands.ListRepositories(&config, &receiver)
+		},
 	}
-    commands.ListRepositories(&config)
 }
 
-func fetchChangesCommand(cmd *cobra.Command, args []string) {
-	if err := loadConfig(); err != nil {
-		log.Fatal(err)
-	}
+func newFetchCommand() *cobra.Command {
+	return &cobra.Command{
+		Use:   "fetch",
+		Short: "Fetch changes from remote for one or all repositories",
+		Run: func(cmd *cobra.Command, args []string) {
+			if err := loadConfig(); err != nil {
+				log.Fatal(err)
+			}
 
-    nickname := helpers.GetNicknameFromArgs(args)
-    commands.FetchRepositories(&config, nickname, allReposFlag)
+			nickname := helpers.GetNicknameFromArgs(args)
+			receiver := getReceiver()
+			commands.FetchRepositories(&config, nickname, &receiver, allReposFlag)
+		},
+	}
 }
 
-func pullChangesCommand(cmd *cobra.Command, args []string) {
-	if err := loadConfig(); err != nil {
-		log.Fatal(err)
-	}
+func newPullCommand() *cobra.Command {
+	return &cobra.Command{
+		Use:   "pull",
+		Short: "Pull changes from remote for one or all repositories",
+		Run: func(cmd *cobra.Command, args []string) {
+			if err := loadConfig(); err != nil {
+				log.Fatal(err)
+			}
 
-    nickname := helpers.GetNicknameFromArgs(args)
-    commands.PullRepositories(&config,nickname,allReposFlag)
+			nickname := helpers.GetNicknameFromArgs(args)
+			receiver := getReceiver()
+			commands.PullRepositories(&config, nickname, &receiver, allReposFlag)
+		},
+	}
 }
 
-func cloneRepositoryCommand(cmd *cobra.Command, args []string) {
-	if err := loadConfig(); err != nil {
-		log.Fatal(err)
-	}
+func newCloneCommand() *cobra.Command {
+	return &cobra.Command{
+		Use:   "clone [nickname]",
+		Short: "Clone a repository or all repositories",
+		Args:  cobra.MaximumNArgs(1),
+		Run: func(cmd *cobra.Command, args []string) {
+			if err := loadConfig(); err != nil {
+				log.Fatal(err)
+			}
 
-    nickname := helpers.GetNicknameFromArgs(args)
-    commands.CloneRepositories(&config,nickname,allReposFlag)
+			nickname := helpers.GetNicknameFromArgs(args)
+			receiver := getReceiver()
+			commands.CloneRepositories(&config, nickname, receiver, allReposFlag)
+		},
+	}
 }
 
+func newDiffCommand() *cobra.Command {
+	return &cobra.Command{
+		Use:   "diff [nickname]",
+		Short: "Show diff for a repository or all repositories",
+		Args:  cobra.MaximumNArgs(1),
+		Run: func(cmd *cobra.Command, args []string) {
+			if err := loadConfig(); err != nil {
+				log.Fatal(err)
+			}
 
-func showRepositoryDiffCommand(cmd *cobra.Command, args []string) {
-	if err := loadConfig(); err != nil {
-		log.Fatal(err)
+			nickname := helpers.GetNicknameFromArgs(args)
+			receiver := getReceiver()
+			commands.DiffRepositories(&config, nickname, receiver, allReposFlag)
+		},
 	}
-
-    nickname := helpers.GetNicknameFromArgs(args)
-    commands.DiffRepositories(&config,nickname,allReposFlag)
 }
 
-func openRepositoryInIDECommand(cmd *cobra.Command, args []string) {
-	if err := loadConfig(); err != nil {
-		log.Fatal(err)
-	}
+func newEditCommand() *cobra.Command {
+	return &cobra.Command{
+		Use:   "edit [nickname]",
+		Short: "Open a repository in IDE",
+		Args:  cobra.ExactArgs(1),
+		Run: func(cmd *cobra.Command, args []string) {
+			if err := loadConfig(); err != nil {
+				log.Fatal(err)
+			}
 
-    nickname := helpers.GetNicknameFromArgs(args)
-	repo := helpers.FindRepositoryByNickname(nickname, &config)
-    commands.OpenideRepositories(repo, &config)
+			nickname := helpers.GetNicknameFromArgs(args)
+			repo := helpers.FindRepositoryByNickname(nickname, &config)
+			receiver := getReceiver()
+			commands.OpenIDERepositories(repo, &config, receiver)
+		},
+	}
 }
 
-func executeCommandInRepositoryCommand(cmd *cobra.Command, args []string) {
-	if err := loadConfig(); err != nil {
-		log.Fatal(err)
-	}
+func newExecCommand() *cobra.Command {
+	return &cobra.Command{
+		Use:   "exec [nickname] [command]",
+		Short: "Execute a command in a repository",
+		Args:  cobra.MinimumNArgs(2),
+		Run: func(cmd *cobra.Command, args []string) {
+			if err := loadConfig(); err != nil {
+				log.Fatal(err)
+			}
 
-	nickname := args[0]
-	commandArgs := args[1:]
-	repo := helpers.FindRepositoryByNickname(nickname, &config)
-    commands.ExecInRepositories(repo, commandArgs, &config)
+			nickname := args[0]
+			commandArgs := args[1:]
+			repo := helpers.FindRepositoryByNickname(nickname, &config)
+			receiver := getReceiver()
+			commands.ExecInRepositories(repo, commandArgs, &config, receiver)
+		},
+	}
 }
 
-func generateExampleConfigCommand(cmd *cobra.Command, args []string) {
-	fmt.Println(exampleConfig)
+func newGenerateConfigCommand() *cobra.Command {
+	return &cobra.Command{
+		Use:   "generate-config",
+		Short: "Generate an example config file",
+		Run: func(cmd *cobra.Command, args []string) {
+			fmt.Println(exampleConfig)
+		},
+	}
 }
 
 func displayHelp(cmd *cobra.Command, args []string) {
 	cmd.Help()
 }
 
-//Helpers
+func getReceiver() receiver.Receiver {
+	if jsonOutput {
+		return receiver.NewJSONReceiver()
+	}
+	return receiver.NewTextReceiver()
+}
 
 func loadConfig() error {
 	file, err := os.Open(configFile)

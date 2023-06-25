@@ -8,10 +8,9 @@ import (
 	"repo-watch/models"
 )
 
-
-func OpenideRepositories(repo *models.Repository,config *models.Config) {
+func OpenIDERepositories(repo *models.Repository, config *models.Config, receiver receiver.Receiver) {
 	if repo != nil {
-        repoPath := helpers.GetRepositoryPath(repo, config)
+		repoPath := helpers.GetRepositoryPath(repo, config)
 		cmd := exec.Command(config.EditCommand, repoPath)
 		cmd.Stdout = os.Stdout
 		cmd.Stderr = os.Stderr

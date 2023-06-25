@@ -6,9 +6,10 @@ import (
 	"os/exec"
 	"repo-watch/helpers"
 	"repo-watch/models"
+	"repo-watch/receiver"
 )
 
-func PullRepositories(config *models.Config, nickname string, allReposFlag bool)  {
+func PullRepositories(config *models.Config, nickname string, receiver *receiver.Receiver, allReposFlag bool) {
 	if allReposFlag {
 		for _, repo := range config.Repositories {
 			pullChangesForRepository(&repo, config)
@@ -21,7 +22,6 @@ func PullRepositories(config *models.Config, nickname string, allReposFlag bool)
 			fmt.Println("Repository not found in config.")
 		}
 	}
-    
 }
 
 func pullChangesForRepository(repo *models.Repository, config *models.Config) {

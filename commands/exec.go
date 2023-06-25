@@ -6,11 +6,12 @@ import (
 	"os/exec"
 	"repo-watch/helpers"
 	"repo-watch/models"
+	"repo-watch/receiver"
 )
 
-func ExecInRepositories(repo *models.Repository, commandArgs []string,config *models.Config) {
+func ExecInRepositories(repo *models.Repository, commandArgs []string, config *models.Config, receiver receiver.Receiver) {
 	if repo != nil {
-        repoPath := helpers.GetRepositoryPath(repo, config)
+		repoPath := helpers.GetRepositoryPath(repo, config)
 		cmd := exec.Command(commandArgs[0], commandArgs[1:]...)
 		cmd.Stdout = os.Stdout
 		cmd.Stderr = os.Stderr

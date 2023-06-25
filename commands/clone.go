@@ -6,9 +6,10 @@ import (
 	"os/exec"
 	"repo-watch/helpers"
 	"repo-watch/models"
+	"repo-watch/receiver"
 )
 
-func CloneRepositories(config *models.Config, nickname string, allReposFlag bool)  {
+func CloneRepositories(config *models.Config, nickname string, receiver receiver.Receiver, allReposFlag bool) {
 	if allReposFlag {
 		for _, repo := range config.Repositories {
 			pullChangesForRepository(&repo, config)
@@ -38,4 +39,3 @@ func cloneRepository(repo *models.Repository, config *models.Config) {
 		fmt.Printf("Failed to clone repository %s: %v\n", repo.Nickname, err)
 	}
 }
-
