@@ -152,7 +152,7 @@ po2.git
 - Execute a command within a repository:
 
   ```bash
-  rw exec repo1 go test ./...
+  rw exec repo1 'go test ./...'
   ```
 
 ## Contributing
