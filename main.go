@@ -3,14 +3,12 @@ package main
 import (
 	"fmt"
 	"log"
-	"os"
 	"repo-watch/commands"
 	"repo-watch/helpers"
 	"repo-watch/models"
 	"repo-watch/receiver"
 
 	"github.com/spf13/cobra"
-	"gopkg.in/yaml.v2"
 )
 
 var (
@@ -62,7 +60,7 @@ func newListCommand() *cobra.Command {
 		Use:   "list",
 		Short: "List repositories",
 		Run: func(cmd *cobra.Command, args []string) {
-			if err := loadConfig(); err != nil {
+			if err := helpers.LoadConfig(configFile, &config); err != nil {
 				log.Fatal(err)
 			}
 			receiver := getReceiver()
@@ -76,7 +74,7 @@ func newFetchCommand() *cobra.Command {
 		Use:   "fetch",
 		Short: "Fetch changes from remote for one or all repositories",
 		Run: func(cmd *cobra.Command, args []string) {
-			if err := loadConfig(); err != nil {
+			if err := helpers.LoadConfig(configFile, &config); err != nil {
 				log.Fatal(err)
 			}
 
@@ -92,7 +90,7 @@ func newPullCommand() *cobra.Command {
 		Use:   "pull",
 		Short: "Pull changes from remote for one or all repositories",
 		Run: func(cmd *cobra.Command, args []string) {
-			if err := loadConfig(); err != nil {
+			if err := helpers.LoadConfig(configFile, &config); err != nil {
 				log.Fatal(err)
 			}
 
@@ -109,7 +107,7 @@ func newCloneCommand() *cobra.Command {
 		Short: "Clone a repository or all repositories",
 		Args:  cobra.MaximumNArgs(1),
 		Run: func(cmd *cobra.Command, args []string) {
-			if err := loadConfig(); err != nil {
+			if err := helpers.LoadConfig(configFile, &config); err != nil {
 				log.Fatal(err)
 			}
 
@@ -126,7 +124,7 @@ func newDiffCommand() *cobra.Command {
 		Short: "Show diff for a repository or all repositories",
 		Args:  cobra.MaximumNArgs(1),
 		Run: func(cmd *cobra.Command, args []string) {
-			if err := loadConfig(); err != nil {
+			if err := helpers.LoadConfig(configFile, &config); err != nil {
 				log.Fatal(err)
 			}
 
@@ -143,7 +141,7 @@ func newEditCommand() *cobra.Command {
 		Short: "Open a repository in IDE",
 		Args:  cobra.ExactArgs(1),
 		Run: func(cmd *cobra.Command, args []string) {
-			if err := loadConfig(); err != nil {
+			if err := helpers.LoadConfig(configFile, &config); err != nil {
 				log.Fatal(err)
 			}
 
@@ -161,7 +159,7 @@ func newExecCommand() *cobra.Command {
 		Short: "Execute a command in a repository",
 		Args:  cobra.MinimumNArgs(2),
 		Run: func(cmd *cobra.Command, args []string) {
-			if err := loadConfig(); err != nil {
+			if err := helpers.LoadConfig(configFile ,&config); err != nil {
 				log.Fatal(err)
 			}
 
@@ -193,19 +191,4 @@ func getReceiver() receiver.Receiver {
 		return receiver.NewJSONReceiver()
 	}
 	return receiver.NewTextReceiver()
-}
-
-func loadConfig() error {
-	file, err := os.Open(configFile)
-	if err != nil {
-		return fmt.Errorf("failed to open config file: %v", err)
-	}
-	defer file.Close()
-
-	decoder := yaml.NewDecoder(file)
-	if err := decoder.Decode(&config); err != nil {
-		return fmt.Errorf("failed to decode config file: %v", err)
-	}
-
-	return nil
 }
