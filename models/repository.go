@@ -5,5 +5,4 @@ type Repository struct {
 	FolderName      string `yaml:"folderName"`
 	URL             string `yaml:"url"`
 	Sparse          bool   `yaml:"sparse"`
-	LastCheckedHash string `yaml:"lastCheckedHash"`
 }

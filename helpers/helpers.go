@@ -2,6 +2,7 @@ package helpers
 
 import (
 	"fmt"
+	"io/ioutil"
 	"os"
 	"path/filepath"
 	"repo-watch/models"
@@ -40,6 +41,26 @@ func LoadConfig(configFile string, config *models.Config) error {
 	decoder := yaml.NewDecoder(file)
 	if err := decoder.Decode(&config); err != nil {
 		return fmt.Errorf("failed to decode config file: %v", err)
+	}
+
+	return nil
+}
+
+func SaveConfig(file string, config models.Config) error {
+	configFile, err := yaml.Marshal(&config)
+	if err != nil {
+		return err
+	}
+
+	dir := filepath.Dir(file)
+	if _, err := os.Stat(dir); os.IsNotExist(err) {
+		if err := os.MkdirAll(dir, 0755); err != nil {
+			return err
+		}
+	}
+
+	if err := ioutil.WriteFile(file, configFile, 0644); err != nil {
+		return err
 	}
 
 	return nil

@@ -37,6 +37,8 @@ func main() {
 	rootCmd.AddCommand(newEditCommand())
 	rootCmd.AddCommand(newExecCommand())
 
+	rootCmd.AddCommand(newAddRepositoryCommand())
+
 	if err := rootCmd.Execute(); err != nil {
 		log.Fatal(err)
 	}
@@ -52,6 +54,21 @@ func newListCommand() *cobra.Command {
 			}
 			receiver := getReceiver()
 			commands.ListRepositories(&config, &receiver)
+		},
+	}
+}
+
+func newAddRepositoryCommand() *cobra.Command {
+	return &cobra.Command{
+		Use:   "add-repo",
+		Short: "Add a repository to the configuration",
+		Run: func(cmd *cobra.Command, args []string) {
+			if err := helpers.LoadConfig(configFile, &config); err != nil {
+				log.Fatal(err)
+			}
+
+			receiver := getReceiver()
+			commands.AddRepository(&config, configFile,receiver)
 		},
 	}
 }
