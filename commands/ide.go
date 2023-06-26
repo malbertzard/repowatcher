@@ -6,6 +6,7 @@ import (
 	"os/exec"
 	"repo-watch/helpers"
 	"repo-watch/models"
+	"repo-watch/receiver"
 )
 
 func OpenIDERepositories(repo *models.Repository, config *models.Config, receiver receiver.Receiver) {

@@ -6,9 +6,10 @@ import (
 	"os/exec"
 	"repo-watch/helpers"
 	"repo-watch/models"
+	"repo-watch/receiver"
 )
 
-func DiffRepositories(config *models.Config, nickname string, receiver.Receiver, allReposFlag bool)  {
+func DiffRepositories(config *models.Config, nickname string, receiver receiver.Receiver, allReposFlag bool)  {
 	if allReposFlag {
 		for _, repo := range config.Repositories {
 			showRepositoryDiff(&repo, config)
