@@ -7,17 +7,24 @@ import (
 	"repo-watch/helpers"
 	"repo-watch/models"
 	"repo-watch/receiver"
+	"sync"
 )
 
 func PullRepositories(config *models.Config, nickname string, receiver *receiver.Receiver, allReposFlag bool) {
 	if allReposFlag {
+		var wg sync.WaitGroup
 		for _, repo := range config.Repositories {
-			pullChangesForRepository(&repo, config)
+			wg.Add(1)
+			go func(repo models.Repository) {
+				defer wg.Done()
+				pullChangesForRepository(&repo, config)
+			}(repo)
 		}
+		wg.Wait()
 	} else {
 		repo := helpers.FindRepositoryByNickname(nickname, config)
 		if repo != nil {
-			fetchRepository(repo, config)
+			pullChangesForRepository(repo, config)
 		} else {
 			fmt.Println("Repository not found in config.")
 		}

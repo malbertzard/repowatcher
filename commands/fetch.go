@@ -7,13 +7,20 @@ import (
 	"repo-watch/helpers"
 	"repo-watch/models"
 	"repo-watch/receiver"
+	"sync"
 )
 
 func FetchRepositories(config *models.Config, nickname string, receiver *receiver.Receiver, allReposFlag bool) {
 	if allReposFlag {
+		var wg sync.WaitGroup
 		for _, repo := range config.Repositories {
-			fetchRepository(&repo, config)
+			wg.Add(1)
+			go func(repo models.Repository) {
+				defer wg.Done()
+				fetchRepository(&repo, config)
+			}(repo)
 		}
+		wg.Wait()
 	} else {
 		repo := helpers.FindRepositoryByNickname(nickname, config)
 		if repo != nil {
@@ -22,7 +29,6 @@ func FetchRepositories(config *models.Config, nickname string, receiver *receive
 			fmt.Println("Repository not found in config.")
 		}
 	}
-
 }
 
 func fetchRepository(repo *models.Repository, config *models.Config) {
