@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"repo-watch/commands"
 	"repo-watch/helpers"
@@ -16,18 +15,6 @@ var (
 	config        models.Config
 	allReposFlag  bool
 	jsonOutput    bool
-	exampleConfig = `---
-rootFolder: /path/to/repositories
-editCommand: code
-repositories:
-  - nickname: repo1
-    folderName: repo1
-    url: https://github.com/user/repo1.git
-    sparse: true
-  - nickname: repo2
-    folderName: repo2
-    url: https://github.com/user/repo2.git
-    sparse: false`
 )
 
 func main() {
@@ -49,7 +36,6 @@ func main() {
 	rootCmd.AddCommand(newRemoteDiffCommand())
 	rootCmd.AddCommand(newEditCommand())
 	rootCmd.AddCommand(newExecCommand())
-	rootCmd.AddCommand(newGenerateConfigCommand())
 
 	if err := rootCmd.Execute(); err != nil {
 		log.Fatal(err)
@@ -186,16 +172,6 @@ func newExecCommand() *cobra.Command {
 			repo := helpers.FindRepositoryByNickname(nickname, &config)
 			receiver := getReceiver()
 			commands.ExecInRepositories(repo, commandArgs, &config, receiver)
-		},
-	}
-}
-
-func newGenerateConfigCommand() *cobra.Command {
-	return &cobra.Command{
-		Use:   "generate-config",
-		Short: "Generate an example config file",
-		Run: func(cmd *cobra.Command, args []string) {
-			fmt.Println(exampleConfig)
 		},
 	}
 }

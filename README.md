@@ -64,24 +64,23 @@ Repo Watch provides the following commands:
   rw clone [nickname]
   ```
 
-  - If `nickname` is provided, clones the repository with the specified nickname.
-  - If no `nickname` is provided, clones all repositories.
-
 - `diff`: Shows the diff for a repository or all repositories.
 
   ```bash
   rw diff [nickname]
   ```
 
-  - If `nickname` is provided, shows the diff for the repository with the specified nickname.
-  - If no `nickname` is provided, shows the diff for all repositories.
+- `rdiff`: Shows the diff for a repository from the remote.
+
+  ```bash
+  rw rdiff [nickname]
+  ```
 
 - `edit`: Opens a repository in an IDE.
 
   ```bash
   rw edit [nickname]
   ```
-
   - Opens the repository with the specified nickname in the configured IDE.
 
 - `exec`: Executes a command in a repository.
@@ -90,13 +89,8 @@ Repo Watch provides the following commands:
   rw exec [nickname] [command]
   ```
 
+  - WIP
   - Executes the specified command within the repository with the specified nickname.
-
-- `generate-config`: Generates an example `config.yaml` file.
-
-  ```bash
-  rw generate-config
-  ```
 
 For each command, you can use the `-c` or `--config` flag to specify a custom configuration file. By default, Repo Watch looks for a `config.yaml` file in the current directory.
 
