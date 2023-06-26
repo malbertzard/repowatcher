@@ -17,7 +17,7 @@ func CloneRepositories(config *models.Config, nickname string, receiver receiver
 	} else {
 		repo := helpers.FindRepositoryByNickname(nickname, config)
 		if repo != nil {
-			fetchRepository(repo, config)
+			cloneRepository(repo, config)
 		} else {
 			fmt.Println("Repository not found in config.")
 		}

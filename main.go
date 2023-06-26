@@ -46,6 +46,7 @@ func main() {
 	rootCmd.AddCommand(newPullCommand())
 	rootCmd.AddCommand(newCloneCommand())
 	rootCmd.AddCommand(newDiffCommand())
+	rootCmd.AddCommand(newRemoteDiffCommand())
 	rootCmd.AddCommand(newEditCommand())
 	rootCmd.AddCommand(newExecCommand())
 	rootCmd.AddCommand(newGenerateConfigCommand())
@@ -131,6 +132,23 @@ func newDiffCommand() *cobra.Command {
 			nickname := helpers.GetNicknameFromArgs(args)
 			receiver := getReceiver()
 			commands.DiffRepositories(&config, nickname, receiver, allReposFlag)
+		},
+	}
+}
+
+func newRemoteDiffCommand() *cobra.Command {
+	return &cobra.Command{
+		Use:   "rdiff [nickname]",
+		Short: "Show diff for a repository from remote",
+		Args:  cobra.MaximumNArgs(1),
+		Run: func(cmd *cobra.Command, args []string) {
+			if err := helpers.LoadConfig(configFile, &config); err != nil {
+				log.Fatal(err)
+			}
+
+			nickname := helpers.GetNicknameFromArgs(args)
+			receiver := getReceiver()
+			commands.DiffRemoteRepositories(&config, nickname, receiver, allReposFlag)
 		},
 	}
 }

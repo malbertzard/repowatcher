@@ -5,9 +5,11 @@ repositories:
   folderName: neofolder
   url: https://github.com/neovim/neovim
   sparse: true
-  lastCheckedHash: 5c73b1bb4c876d207e868bffc9f741c2a60d4aaf
 - nickname: animated
   folderName: animated_folder
   url: https://github.com/new-data-services/tailwindcss-animated
   sparse: false
-  lastCheckedHash: ""
+- nickname: log
+  folderName: logseq-awesome
+  url: https://github.com/logseq/awesome-logseq
+  sparse: false
