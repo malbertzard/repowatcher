@@ -40,9 +40,6 @@ Repo Watch provides the following commands:
   rw fetch [nickname]
   ```
 
-  - If `nickname` is provided, fetches changes for the repository with the specified nickname.
-  - If no `nickname` is provided, fetches changes for all repositories.
-
 - `list`: Lists all repositories configured in the `config.yaml` file.
 
   ```bash
@@ -54,9 +51,6 @@ Repo Watch provides the following commands:
   ```bash
   rw pull [nickname]
   ```
-
-  - If `nickname` is provided, pulls changes for the repository with the specified nickname.
-  - If no `nickname` is provided, pulls changes for all repositories.
 
 - `clone`: Clones a repository or all repositories.
 
@@ -92,11 +86,11 @@ Repo Watch provides the following commands:
   - WIP
   - Executes the specified command within the repository with the specified nickname.
 
-For each command, you can use the `-c` or `--config` flag to specify a custom configuration file. By default, Repo Watch looks for a `config.yaml` file in the current directory.
+For each command, you can use the `-c` or `--config` flag to specify a custom configuration file.
 
 ## Configuration
 
-The configuration file (`config.yaml`) contains the settings for Repo Watch. It should be placed in the same directory as the `repo-watch` executable. Here is an example configuration:
+The configuration file (config.yaml) contains the settings for Repo Watch. It should be placed in the ~/.config/rw/ directory. Here is an example configuration:
 
 ```yaml
 ---
