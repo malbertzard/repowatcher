@@ -2,6 +2,8 @@ package main
 
 import (
 	"log"
+	"os"
+	"path/filepath"
 	"repo-watch/commands"
 	"repo-watch/helpers"
 	"repo-watch/models"
@@ -17,27 +19,50 @@ var (
 	jsonOutput    bool
 )
 
+
 func main() {
+	// Get the user's home directory
+	homeDir, err := os.UserHomeDir()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	defaultConfigFile := filepath.Join(homeDir, ".config", "rw", "config.yaml")
+
+	if _, err := os.Stat(defaultConfigFile); os.IsNotExist(err) {
+		configDir := filepath.Dir(defaultConfigFile)
+		if err := os.MkdirAll(configDir, 0700); err != nil {
+			log.Fatal(err)
+		}
+	}
+
+	// Use the default config file if the configFile flag is not set
+	if configFile == "" {
+		configFile = defaultConfigFile
+	}
+
 	rootCmd := &cobra.Command{
 		Use:   "rw",
 		Short: "A tool for managing multiple Git repositories",
 		Run:   displayHelp,
 	}
 
-	rootCmd.PersistentFlags().StringVarP(&configFile, "config", "c", "config.yaml", "config file")
+	rootCmd.PersistentFlags().StringVarP(&configFile, "config", "c", configFile, "config file")
 	rootCmd.PersistentFlags().BoolVarP(&allReposFlag, "all", "a", false, "apply command to all repositories")
 	rootCmd.PersistentFlags().BoolVar(&jsonOutput, "json", false, "output in JSON format")
 
-	rootCmd.AddCommand(newFetchCommand())
+	rootCmd.AddCommand(newAddRepositoryCommand())
 	rootCmd.AddCommand(newListCommand())
-	rootCmd.AddCommand(newPullCommand())
+
 	rootCmd.AddCommand(newCloneCommand())
+	rootCmd.AddCommand(newFetchCommand())
+	rootCmd.AddCommand(newPullCommand())
+
 	rootCmd.AddCommand(newDiffCommand())
 	rootCmd.AddCommand(newRemoteDiffCommand())
+
 	rootCmd.AddCommand(newEditCommand())
 	rootCmd.AddCommand(newExecCommand())
-
-	rootCmd.AddCommand(newAddRepositoryCommand())
 
 	if err := rootCmd.Execute(); err != nil {
 		log.Fatal(err)
@@ -60,7 +85,7 @@ func newListCommand() *cobra.Command {
 
 func newAddRepositoryCommand() *cobra.Command {
 	return &cobra.Command{
-		Use:   "add-repo",
+		Use:   "add",
 		Short: "Add a repository to the configuration",
 		Run: func(cmd *cobra.Command, args []string) {
 			if err := helpers.LoadConfig(configFile, &config); err != nil {
