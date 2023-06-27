@@ -13,12 +13,11 @@ import (
 )
 
 var (
-	configFile    string
-	config        models.Config
-	allReposFlag  bool
-	jsonOutput    bool
+	configFile   string
+	config       models.Config
+	allReposFlag bool
+	jsonOutput   bool
 )
-
 
 func main() {
 	// Get the user's home directory
@@ -93,7 +92,7 @@ func newAddRepositoryCommand() *cobra.Command {
 			}
 
 			receiver := getReceiver()
-			commands.AddRepository(&config, configFile,receiver)
+			commands.AddRepository(&config, configFile, receiver)
 		},
 	}
 }
@@ -205,7 +204,7 @@ func newExecCommand() *cobra.Command {
 		Short: "Execute a command in a repository",
 		Args:  cobra.MinimumNArgs(2),
 		Run: func(cmd *cobra.Command, args []string) {
-			if err := helpers.LoadConfig(configFile ,&config); err != nil {
+			if err := helpers.LoadConfig(configFile, &config); err != nil {
 				log.Fatal(err)
 			}
 

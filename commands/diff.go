@@ -10,7 +10,7 @@ import (
 	"strings"
 )
 
-func DiffRepositories(config *models.Config, nickname string, receiver receiver.Receiver, allReposFlag bool)  {
+func DiffRepositories(config *models.Config, nickname string, receiver receiver.Receiver, allReposFlag bool) {
 	if allReposFlag {
 		for _, repo := range config.Repositories {
 			showRepositoryDiff(&repo, config)
@@ -25,7 +25,7 @@ func DiffRepositories(config *models.Config, nickname string, receiver receiver.
 	}
 }
 
-func DiffRemoteRepositories(config *models.Config, nickname string, receiver receiver.Receiver, allReposFlag bool)  {
+func DiffRemoteRepositories(config *models.Config, nickname string, receiver receiver.Receiver, allReposFlag bool) {
 	if allReposFlag {
 		for _, repo := range config.Repositories {
 			showRemoteDiff(&repo, config)
@@ -68,7 +68,7 @@ func showRemoteDiff(repo *models.Repository, config *models.Config) {
 	}
 	branch := strings.TrimSpace(string(output))
 
-    cmd = exec.Command("git", "-C", repoPath, "diff", branch, ("origin/"+ branch))
+	cmd = exec.Command("git", "-C", repoPath, "diff", branch, ("origin/" + branch))
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	err = cmd.Run()
@@ -76,4 +76,3 @@ func showRemoteDiff(repo *models.Repository, config *models.Config) {
 		fmt.Printf("Failed to show remote diff for repository %s: %v\n", repo.Nickname, err)
 	}
 }
-
