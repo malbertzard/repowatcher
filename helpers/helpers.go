@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"repo-watch/models"
 
@@ -65,3 +66,20 @@ func SaveConfig(file string, config models.Config) error {
 
 	return nil
 }
+
+func RunCommand(name string, args ...string) error {
+	cmd := exec.Command(name, args...)
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	return cmd.Run()
+}
+
+func RunCommandOutput(name string, args ...string) (string, error) {
+	cmd := exec.Command(name, args...)
+	output, err := cmd.Output()
+	if err != nil {
+		return "", err
+	}
+	return string(output), nil
+}
+

@@ -158,7 +158,7 @@ func newDiffCommand() *cobra.Command {
 
 			nickname := helpers.GetNicknameFromArgs(args)
 			receiver := getReceiver()
-			commands.DiffRepositories(&config, nickname, receiver, allReposFlag)
+			commands.ShowDiff(&config, nickname, receiver, allReposFlag, false)
 		},
 	}
 }
@@ -175,7 +175,7 @@ func newRemoteDiffCommand() *cobra.Command {
 
 			nickname := helpers.GetNicknameFromArgs(args)
 			receiver := getReceiver()
-			commands.DiffRemoteRepositories(&config, nickname, receiver, allReposFlag)
+			commands.ShowDiff(&config, nickname, receiver, allReposFlag, true)
 		},
 	}
 }

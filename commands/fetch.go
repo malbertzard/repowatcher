@@ -2,8 +2,6 @@ package commands
 
 import (
 	"fmt"
-	"os"
-	"os/exec"
 	"repo-watch/helpers"
 	"repo-watch/models"
 	"repo-watch/receiver"
@@ -17,27 +15,25 @@ func FetchRepositories(config *models.Config, nickname string, receiver *receive
 			wg.Add(1)
 			go func(repo models.Repository) {
 				defer wg.Done()
-				fetchRepository(&repo, config)
+				fetchChangesForRepository(&repo, config)
 			}(repo)
 		}
 		wg.Wait()
 	} else {
 		repo := helpers.FindRepositoryByNickname(nickname, config)
 		if repo != nil {
-			fetchRepository(repo, config)
+			fetchChangesForRepository(repo, config)
 		} else {
 			fmt.Println("Repository not found in config.")
 		}
 	}
 }
 
-func fetchRepository(repo *models.Repository, config *models.Config) {
+func fetchChangesForRepository(repo *models.Repository, config *models.Config) {
 	repoPath := helpers.GetRepositoryPath(repo, config)
-	cmd := exec.Command("git", "-C", repoPath, "fetch", "--all")
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-	err := cmd.Run()
+	err := helpers.RunCommand("git", "-C", repoPath, "fetch")
 	if err != nil {
 		fmt.Printf("Failed to fetch changes for repository %s: %v\n", repo.Nickname, err)
 	}
 }
+
