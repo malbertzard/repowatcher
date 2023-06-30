@@ -1,10 +1,8 @@
 package commands
 
 import (
-	"bufio"
 	"fmt"
 	"log"
-	"os"
 	"repo-watch/helpers"
 	"repo-watch/models"
 	"repo-watch/receiver"
@@ -13,30 +11,13 @@ import (
 
 func AddRepository(config *models.Config, configFile string, receiver receiver.Receiver) {
 	if err := helpers.LoadConfig(configFile, config); err != nil {
-		log.Fatal(err)
+		log.Fatalf("Failed to load config file: %v", err)
 	}
 
-	reader := bufio.NewReader(os.Stdin)
-
-	nickname, err := readInput("Nickname: ", reader)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	folderName, err := readInput("Folder Name: ", reader)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	url, err := readInput("URL: ", reader)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	sparse, err := readBoolInput("Enable Sparse Checkout? (y/n): ", reader)
-	if err != nil {
-		log.Fatal(err)
-	}
+	nickname := readInput("Nickname: ")
+	folderName := readInput("Folder Name: ")
+	url := readInput("URL: ")
+	sparse := readBoolInput("Enable Sparse Checkout? (y/n): ")
 
 	repository := models.Repository{
 		Nickname:   nickname,
@@ -48,40 +29,31 @@ func AddRepository(config *models.Config, configFile string, receiver receiver.R
 	config.Repositories = append(config.Repositories, repository)
 
 	if err := helpers.SaveConfig(configFile, *config); err != nil {
-		log.Fatal(err)
+		log.Fatalf("Failed to save config file: %v", err)
 	}
 
 	log.Printf("Repository added: %s", repository.Nickname)
 }
 
-func readInput(prompt string, reader *bufio.Reader) (string, error) {
+func readInput(prompt string) string {
+	var input string
 	fmt.Print(prompt)
-	input, err := reader.ReadString('\n')
-	if err != nil {
-		return "", err
-	}
-
-	// Trim newline character
-	input = strings.TrimSpace(input)
-
-	return input, nil
+	fmt.Scanln(&input)
+	return strings.TrimSpace(input)
 }
 
-func readBoolInput(prompt string, reader *bufio.Reader) (bool, error) {
+func readBoolInput(prompt string) bool {
 	for {
-		input, err := readInput(prompt, reader)
-		if err != nil {
-			return false, err
-		}
+		input := readInput(prompt)
 
-		input = strings.ToLower(input)
-
-		if input == "y" || input == "yes" {
-			return true, nil
-		} else if input == "n" || input == "no" {
-			return false, nil
-		} else {
+		switch strings.ToLower(input) {
+		case "y", "yes":
+			return true
+		case "n", "no":
+			return false
+		default:
 			fmt.Println("Invalid input. Please enter 'y' or 'n'.")
 		}
 	}
 }
+

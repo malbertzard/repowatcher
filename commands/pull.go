@@ -2,8 +2,6 @@ package commands
 
 import (
 	"fmt"
-	"os"
-	"os/exec"
 	"repo-watch/helpers"
 	"repo-watch/models"
 	"repo-watch/receiver"
@@ -33,11 +31,9 @@ func PullRepositories(config *models.Config, nickname string, receiver *receiver
 
 func pullChangesForRepository(repo *models.Repository, config *models.Config) {
 	repoPath := helpers.GetRepositoryPath(repo, config)
-	cmd := exec.Command("git", "-C", repoPath, "pull", "--all")
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-	err := cmd.Run()
+	err := helpers.RunCommand("git", "-C", repoPath, "pull")
 	if err != nil {
 		fmt.Printf("Failed to pull changes for repository %s: %v\n", repo.Nickname, err)
 	}
 }
+

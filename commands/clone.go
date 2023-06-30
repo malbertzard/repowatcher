@@ -2,8 +2,6 @@ package commands
 
 import (
 	"fmt"
-	"os"
-	"os/exec"
 	"repo-watch/helpers"
 	"repo-watch/models"
 	"repo-watch/receiver"
@@ -38,11 +36,9 @@ func cloneRepository(repo *models.Repository, config *models.Config) {
 		cmdArgs = append(cmdArgs, "--sparse")
 	}
 	cmdArgs = append(cmdArgs, repo.URL, repoPath)
-	cmd := exec.Command("git", cmdArgs...)
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-	err := cmd.Run()
+	err := helpers.RunCommand("git", cmdArgs...)
 	if err != nil {
 		fmt.Printf("Failed to clone repository %s: %v\n", repo.Nickname, err)
 	}
 }
+
