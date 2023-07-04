@@ -50,6 +50,7 @@ func main() {
 	rootCmd.PersistentFlags().BoolVar(&jsonOutput, "json", false, "output in JSON format")
 
 	rootCmd.AddCommand(newAddRepositoryCommand())
+	rootCmd.AddCommand(newCreateRepositoryCommand())
 	rootCmd.AddCommand(newListCommand())
 
 	rootCmd.AddCommand(newCloneCommand())
@@ -77,6 +78,21 @@ func newListCommand() *cobra.Command {
 			}
 			receiver := helpers.GetReceiver(jsonOutput)
 			commands.ListRepositories(&config, &receiver)
+		},
+	}
+}
+
+func newCreateRepositoryCommand() *cobra.Command {
+	return &cobra.Command{
+		Use:   "create",
+		Short: "Create a repository and add it to the configuration",
+		Run: func(cmd *cobra.Command, args []string) {
+			if err := helpers.LoadConfig(configFile, &config); err != nil {
+				log.Fatal(err)
+			}
+
+			receiver := helpers.GetReceiver(jsonOutput)
+			commands.CreateRepository(&config, configFile, receiver)
 		},
 	}
 }
