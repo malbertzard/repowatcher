@@ -34,6 +34,18 @@ To install Repo Watch, you need to have Go installed on your system. Follow thes
 
 Repo Watch provides the following commands:
 
+- `add`: Add a repository to the config.
+
+  ```bash
+  rw add
+  ```
+
+- `add`: Create a repository and add it to the config.
+
+  ```bash
+  rw create
+  ```
+
 - `fetch`: Fetches changes from the remote repository for one or all repositories.
 
   ```bash
