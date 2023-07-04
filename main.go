@@ -7,7 +7,6 @@ import (
 	"repo-watch/commands"
 	"repo-watch/helpers"
 	"repo-watch/models"
-	"repo-watch/receiver"
 
 	"github.com/spf13/cobra"
 )
@@ -51,7 +50,6 @@ func main() {
 	rootCmd.PersistentFlags().BoolVar(&jsonOutput, "json", false, "output in JSON format")
 
 	rootCmd.AddCommand(newAddRepositoryCommand())
-	rootCmd.AddCommand(newCreateRepositoryCommand())
 	rootCmd.AddCommand(newListCommand())
 
 	rootCmd.AddCommand(newCloneCommand())
@@ -77,7 +75,7 @@ func newListCommand() *cobra.Command {
 			if err := helpers.LoadConfig(configFile, &config); err != nil {
 				log.Fatal(err)
 			}
-			receiver := getReceiver()
+			receiver := helpers.GetReceiver(jsonOutput)
 			commands.ListRepositories(&config, &receiver)
 		},
 	}
@@ -92,23 +90,8 @@ func newAddRepositoryCommand() *cobra.Command {
 				log.Fatal(err)
 			}
 
-			receiver := getReceiver()
+			receiver := helpers.GetReceiver(jsonOutput)
 			commands.AddRepository(&config, configFile, receiver)
-		},
-	}
-}
-
-func newCreateRepositoryCommand() *cobra.Command {
-	return &cobra.Command{
-		Use:   "create",
-		Short: "Create a repository and add it to the configuration",
-		Run: func(cmd *cobra.Command, args []string) {
-			if err := helpers.LoadConfig(configFile, &config); err != nil {
-				log.Fatal(err)
-			}
-
-			receiver := getReceiver()
-			commands.CreateRepository(&config, configFile, receiver)
 		},
 	}
 }
@@ -123,7 +106,7 @@ func newFetchCommand() *cobra.Command {
 			}
 
 			nickname := helpers.GetNicknameFromArgs(args)
-			receiver := getReceiver()
+			receiver := helpers.GetReceiver(jsonOutput)
 			commands.FetchRepositories(&config, nickname, &receiver, allReposFlag)
 		},
 	}
@@ -139,7 +122,7 @@ func newPullCommand() *cobra.Command {
 			}
 
 			nickname := helpers.GetNicknameFromArgs(args)
-			receiver := getReceiver()
+			receiver := helpers.GetReceiver(jsonOutput)
 			commands.PullRepositories(&config, nickname, &receiver, allReposFlag)
 		},
 	}
@@ -156,7 +139,7 @@ func newCloneCommand() *cobra.Command {
 			}
 
 			nickname := helpers.GetNicknameFromArgs(args)
-			receiver := getReceiver()
+			receiver := helpers.GetReceiver(jsonOutput)
 			commands.CloneRepositories(&config, nickname, receiver, allReposFlag)
 		},
 	}
@@ -173,8 +156,8 @@ func newDiffCommand() *cobra.Command {
 			}
 
 			nickname := helpers.GetNicknameFromArgs(args)
-			receiver := getReceiver()
-			commands.ShowDiff(&config, nickname, receiver, allReposFlag, false)
+			receiver := helpers.GetReceiver(jsonOutput)
+			commands.DiffRepositories(&config, nickname, receiver, allReposFlag)
 		},
 	}
 }
@@ -190,8 +173,8 @@ func newRemoteDiffCommand() *cobra.Command {
 			}
 
 			nickname := helpers.GetNicknameFromArgs(args)
-			receiver := getReceiver()
-			commands.ShowDiff(&config, nickname, receiver, allReposFlag, true)
+			receiver := helpers.GetReceiver(jsonOutput)
+			commands.DiffRemoteRepositories(&config, nickname, receiver, allReposFlag)
 		},
 	}
 }
@@ -208,7 +191,7 @@ func newEditCommand() *cobra.Command {
 
 			nickname := helpers.GetNicknameFromArgs(args)
 			repo := helpers.FindRepositoryByNickname(nickname, &config)
-			receiver := getReceiver()
+			receiver := helpers.GetReceiver(jsonOutput)
 			commands.OpenIDERepositories(repo, &config, receiver)
 		},
 	}
@@ -227,7 +210,7 @@ func newExecCommand() *cobra.Command {
 			nickname := args[0]
 			commandArgs := args[1:]
 			repo := helpers.FindRepositoryByNickname(nickname, &config)
-			receiver := getReceiver()
+			receiver := helpers.GetReceiver(jsonOutput)
 			commands.ExecInRepositories(repo, commandArgs, &config, receiver)
 		},
 	}
@@ -237,9 +220,3 @@ func displayHelp(cmd *cobra.Command, args []string) {
 	cmd.Help()
 }
 
-func getReceiver() receiver.Receiver {
-	if jsonOutput {
-		return receiver.NewJSONReceiver()
-	}
-	return receiver.NewTextReceiver()
-}

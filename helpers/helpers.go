@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
-	"os/exec"
 	"path/filepath"
 	"repo-watch/models"
+	"repo-watch/receiver"
 
 	"gopkg.in/yaml.v2"
 )
@@ -67,19 +67,10 @@ func SaveConfig(file string, config models.Config) error {
 	return nil
 }
 
-func RunCommand(name string, args ...string) error {
-	cmd := exec.Command(name, args...)
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-	return cmd.Run()
-}
-
-func RunCommandOutput(name string, args ...string) (string, error) {
-	cmd := exec.Command(name, args...)
-	output, err := cmd.Output()
-	if err != nil {
-		return "", err
+func GetReceiver(jsonOutput bool) receiver.Receiver {
+	if jsonOutput {
+		return receiver.NewJSONReceiver()
 	}
-	return string(output), nil
+	return receiver.NewTextReceiver()
 }
 
