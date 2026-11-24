@@ -1,0 +1,23 @@
+[package]
+name = "rw-core"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+rw-model = { path = "../rw-model" }
+axum = { version = "0.8", features = ["ws"] }
+fs2 = "0.4"
+git2 = { version = "0.21", features = ["https", "ssh", "vendored-libgit2", "vendored-openssl"] }
+futures = "0.3"
+getrandom = "0.4"
+reqwest = { version = "0.13", features = ["json", "blocking"] }
+serde = "1"
+serde_json = "1"
+tokio = { version = "1", features = ["rt-multi-thread", "macros", "sync", "net", "time", "fs", "process"] }
+url = "2"
+yaml_serde = "0.10"
+
+[dev-dependencies]
+tempfile = "3"
+tokio = { version = "1", features = ["test-util"] }

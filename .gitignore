@@ -1,0 +1,7 @@
+/target
+/ui/target
+/ui/dist
+/ui/node_modules
+/ui/style/generated.css
+/apps/desktop/target
+/.serena

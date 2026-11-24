@@ -1,0 +1,10 @@
+[workspace]
+resolver = "2"
+members = ["crates/rw-model", "crates/rw-core", "crates/rw", "ui"]
+default-members = ["crates/rw-model", "crates/rw-core", "crates/rw", "ui"]
+exclude = ["apps/desktop"]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2024"
+license = "MIT"

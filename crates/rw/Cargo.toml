@@ -1,0 +1,17 @@
+[package]
+name = "rw"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[[bin]]
+name = "rw"
+path = "src/main.rs"
+
+[dependencies]
+rw-core = { path = "../rw-core" }
+rw-model = { path = "../rw-model" }
+clap = { version = "4", features = ["derive"] }
+reqwest = { version = "0.13", features = ["blocking", "json"] }
+serde = "1"
+tokio = { version = "1", features = ["rt-multi-thread", "macros", "net"] }
